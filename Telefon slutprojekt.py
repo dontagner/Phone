@@ -68,7 +68,7 @@ class Miniräknare(Toplevel):
 Telefon_färg = Canvas(window, width=275,height=530,bg="green")
 Telefon_färg.place(x=15,y=25)
 
-image = Image.open("wolf.png")
+image = Image.open("Bilder/wolf.png")
 photo = ImageTk.PhotoImage(image)
 wolf = Label(window, image=photo, width=250,height=450)
 wolf.place(x=25,y=50)

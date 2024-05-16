@@ -105,12 +105,27 @@ class Välj(Toplevel):
     
         knapp = Button(gui, text="Bekräfta", command=knapp_trycksak)
         knapp.place(x=10,y=100)
+
+class Inställningar(Toplevel):
+    def __init__(Settings, window = None,):
+        super().__init__(master= window) 
+        Settings.geometry("310x600")
+        Settings.title("Settings")
+        Settings.config(background="Grey")
+
+        Ändra_Bakgrundsbild = Label(Settings,text="Välj bakgrundsbild:")
+        Ändra_Bakgrundsbild.place(x=30,y=50)
+    
+
+
 poäng = 0
 fart = 10
 
 x = 150
 y = 300
 game_over = False
+
+
 
 class Flappy(Toplevel):
     def __init__(flappy, window = None,):
@@ -120,16 +135,16 @@ class Flappy(Toplevel):
         flappy.title('Flappy bird')
 
 
-        bild_fågel = Image.open('Slutprojekt/Bilder/fagel.png')
+        bild_fågel = Image.open('Bilder/fagel.png')
         bild_fågel = ImageTk.PhotoImage(bild_fågel)
 
-        bild_rör_nere = Image.open('Slutprojekt/Bilder/ror.png')
+        bild_rör_nere = Image.open('Bilder/ror.png')
         bild_rör_uppe = bild_rör_nere.rotate(180)
 
         bild_rör_nere = ImageTk.PhotoImage(bild_rör_nere)
         bild_rör_uppe = ImageTk.PhotoImage(bild_rör_uppe)
 
-        bild_starta_om = Image.open('Slutprojekt/Bilder/starta_om.png')
+        bild_starta_om = Image.open('Bilder/starta_om.png')
         bild_starta_om = ImageTk.PhotoImage(bild_starta_om)
 
 
@@ -221,6 +236,9 @@ class Flappy(Toplevel):
         flappy.mainloop()
 
 
+Lebonbild = Image.open("Bilder/Sunshine.jpg")
+PhotoBon = ImageTk.PhotoImage(Lebonbild)
+
 def play_audio_image():
     audio_thread = threading.Thread(target=play_audio_lebon)
     audio_thread.start()
@@ -228,7 +246,7 @@ def play_audio_image():
 
 def play_audio_lebon():
     try:
-        playsound("Slutprojekt/Ljud/SunshineLjud.mp3")  # Uppdatera med sökvägen till ditt ljudfil
+        playsound("Ljud/SunshineLjud.mp3")  # Uppdatera med sökvägen till ditt ljudfil
     except Exception as e:
         print("Error playing audio:", e)
 
@@ -236,13 +254,9 @@ def show_image():
     image_window = Toplevel()
     image_window.title("lebon")
     image_window.geometry("600x900")
-
-    Lebonbild = Image.open("Sunshine.jpg")  # Uppdatera med sökvägen till din bildfil
-    photo = ImageTk.PhotoImage()
-
-    image_label = Label(image_window, image=photo)
-    image_label.image = photo
-    image_label.pack()
+    Bon = Label(image_window, image=PhotoBon)
+    Bon.pack()
+    
 
 def knapp_bon_click():
     play_audio_image()
@@ -278,7 +292,7 @@ for i in range(Laddning,101):
         Laddning = i+1
         LaddningVisa.update()
         LaddningVisa.place_forget()
-playsound("Slutprojekt/Ljud/Load.mp3")      
+playsound("Ljud/Load.mp3")      
 Klart = Label(window,text="Klart",font="Arial 15 bold",fg="White",bg="Lightblue")   
 def klart():
     Klart.place(x=192,y=250)
@@ -289,7 +303,7 @@ def förstöra():
 klart()
 
 
-Bakgrundsbild = Image.open("Slutprojekt/Bilder/wolf.png")
+Bakgrundsbild = Image.open("Bilder/wolf.png")
 PhotoWolf = ImageTk.PhotoImage(Bakgrundsbild)
 Wolf = Label(window, image=PhotoWolf, width=250,height=450)
 Wolf.place(x=25,y=50)
@@ -302,59 +316,59 @@ Black_Bar_Vänster.place(x=25,y=50)
 Black_Bar_Botten = Label(window,bg="black",width=36,height=1)
 Black_Bar_Botten.place(x=25,y=490)
 
-Click_Gissa = PhotoImage(file="Slutprojekt/Bilder/Guess.png")
+Click_Gissa = PhotoImage(file="Bilder/Guess.png")
 Bild_Gissa= Label(image=Click_Gissa)
 KnappGissa = Button(window, height=40,width=40,text="Gissa",image=Click_Gissa)
 KnappGissa.bind("<Button>", lambda e: GissaTalet(window))
 KnappGissa.place(x=205,y=350)
 
-Click_Uppg = PhotoImage(file="Slutprojekt/Bilder/Task.png")
+Click_Uppg = PhotoImage(file="Bilder/Task.png")
 Bild_Uppg= Label(image=Click_Uppg)
 KnappVälj = Button(window, height=40,width=40,image=Click_Uppg)
 KnappVälj.bind("<Button>", lambda e: Välj(window))
 KnappVälj.place(x=130,y=350)
 
-Click_Flappy = PhotoImage(file="Slutprojekt/Bilder/Flappybird.png")
+Click_Flappy = PhotoImage(file="Bilder/Flappybird.png")
 Bild_Flappy= Label(image=Click_Flappy)
 KnappFlappy = Button(window, height=40,width=40,image=Click_Flappy)
 KnappFlappy.bind("<Button>", lambda e: Flappy(window))
 KnappFlappy.place(x=55, y=350)
 
-Click_Settings = PhotoImage(file="Slutprojekt/Bilder/Settings.png")
+Click_Settings = PhotoImage(file="Bilder/Settings.png")
 Bild_Settings = Label(image=Click_Settings)
 KnappSettings = Button(window, height=40,width=40,image=Click_Settings)
-KnappSettings.bind("<Button>", lambda e: Välj(window))
+KnappSettings.bind("<Button>", lambda e: Inställningar(window))
 KnappSettings.place(x=55, y=425)
 
-BildpåDully = Image.open("Slutprojekt/Bilder/dully.png")
+BildpåDully = Image.open("Bilder/dully.png")
 Photopådully = ImageTk.PhotoImage(BildpåDully)
 Dully = Label(window, image=Photopådully, width=250,height=450)
 
-BildpåDavid = Image.open("Slutprojekt/Bilder/David.png")
+BildpåDavid = Image.open("Bilder/David.png")
 PhotopåDavid = ImageTk.PhotoImage(BildpåDavid)
 David = Label(window, image=PhotopåDavid, width=250,height=450)
 
-BildpåBeast = Image.open("Slutprojekt/Bilder/Mrbeast.png")
+BildpåBeast = Image.open("Bilder/Mrbeast.png")
 PhotopåBeast = ImageTk.PhotoImage(BildpåBeast)
 MrBeast = Label(window, image=PhotopåBeast, width=250,height=450)
 
-BildpåViktor = Image.open("Slutprojekt/Bilder/Viktor.png")
+BildpåViktor = Image.open("Bilder/Viktor.png")
 PhotopåViktor = ImageTk.PhotoImage(BildpåViktor)
 Viktor = Label(window, image=PhotopåViktor, width=250,height=450)
 
-BildpåTony = Image.open("Slutprojekt/Bilder/Tony.png")
+BildpåTony = Image.open("Bilder/Tony.png")
 PhotopåTony = ImageTk.PhotoImage(BildpåTony)
 Tony = Label(window, image=PhotopåTony, width=250,height=450)
 
-BildpåStefan = Image.open("Slutprojekt/Bilder/Stefan.png")
+BildpåStefan = Image.open("Bilder/Stefan.png")
 PhotopåStefan = ImageTk.PhotoImage(BildpåStefan)
 Stefan = Label(window, image=PhotopåStefan, width=250,height=450)
 
-BildpåJiro = Image.open("Slutprojekt/Bilder/Jiro.png")
+BildpåJiro = Image.open("Bilder/Jiro.png")
 PhotopåJiro = ImageTk.PhotoImage(BildpåJiro)
 Jiro = Label(window, image=PhotopåJiro, width=250,height=450)
 
-BildpåSebbe = Image.open("Slutprojekt/Bilder/Sebbe.png")
+BildpåSebbe = Image.open("Bilder/Sebbe.png")
 PhotopåSebbe = ImageTk.PhotoImage(BildpåSebbe)
 Sebbe = Label(window, image=PhotopåSebbe, width=250,height=450)
 
@@ -453,7 +467,7 @@ ListMeddelande = [meddelandeolja, meddelandemamma, meddelandemelissa, meddelande
 def show_random_message():
     # Slumpmässigt beslut om meddelandet ska visas och ljudet ska spelas
     if random.random() < 0.8:
-            if random.random() < 0.4:
+            if random.random() < 0.2:
                 random_message_func = random.choice(ListMeddelande)
                 random_message_func()
                 thread_audio = threading.Thread(target=play_audio)
@@ -477,19 +491,51 @@ Black_Bar_Vänster.place(x=25,y=50)
 Black_Bar_Botten = Label(window,bg="black",width=36,height=1)
 Black_Bar_Botten.place(x=25,y=490)
 
+def knapp_melissa_click():
+    play_audio_image_melissa()
 
+KnappMelissa = Button(window, height=1,width=1,command=knapp_melissa_click,bg="Black")
+KnappMelissa.place(x=140,y=515)
+
+Melissabild = Image.open("Bilder/Melissa.jpg")
+PhotoMelissa = ImageTk.PhotoImage(Melissabild)
+
+def play_audio_image_melissa():
+    audio_thread = threading.Thread(target=play_audio_melissa)
+    audio_thread.start()
+    show_image_melissa()
+
+def play_audio_melissa():
+    try:
+        playsound("Ljud/Attack.mp3")  # Uppdatera med sökvägen till ditt ljudfil
+    except Exception as e:
+        print("Error playing audio:", e)
+
+def show_image_melissa():
+    image_melissa = Toplevel()
+    image_melissa.title("Melissa")
+    image_melissa.geometry("676x900")
+    Melissa = Label(image_melissa, image=PhotoMelissa)
+    Melissa.pack()
+
+def play_audio_melissa():
+    try:
+        playsound("Ljud/Attack.mp3")  # Uppdatera med sökvägen till ditt ljudfil
+    except Exception as e:
+        print("Error playing audio:", e)
 
 def play_audio():
     try:
-        playsound("Slutprojekt/Ljud/Message.mp3")  # Uppdatera med sökvägen till ditt ljudfil
+        playsound("Ljud/Message.mp3")  # Uppdatera med sökvägen till ditt ljudfil
     except Exception as e:
         print("Error playing audio:", e)
-        
+
 def play_audioRing():
     try:
-        playsound("Slutprojekt/Ljud/Ring.mp3")  # Uppdatera med sökvägen till ditt ljudfil
+        playsound("Ljud/Ring.mp3")  # Uppdatera med sökvägen till ditt ljudfil
     except Exception as e:
         print("Error playing audio:", e)
+
         
 Tiden_Mobil = Label(window,bg="Black",fg="White",font=("Arial 9 bold"))
 Tiden_Mobil.place(x=136,y=50)
