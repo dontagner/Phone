@@ -6,10 +6,11 @@ from playsound import playsound
 import threading
 import random
 import time
+import webbrowser
 
 window = Tk()
 window.geometry("310x600")
-window.title("bleckbery")
+window.title("Motorola")
 window.config(background="black")
 
 
@@ -131,6 +132,7 @@ class Flappy(Toplevel):
     def __init__(flappy, window = None,):
         super().__init__(master= window)   
 
+
         flappy.geometry('1000x600')
         flappy.title('Flappy bird')
 
@@ -171,35 +173,34 @@ class Flappy(Toplevel):
             canvasflappy.coords(fågel, x, y)
             if y < 0 or y > canvasflappy.winfo_height():
                 spel_över()
-            
+                    
             if not game_over:
                 flappy.after(50, flytta_fågel)
 
         def flytta_rör():
-            global poäng,game_over,fart
+            global poäng, game_over, fart
             canvasflappy.move(rör_uppe, -fart, 0)
             canvasflappy.move(rör_nere, -fart, 0)
+            
             if canvasflappy.coords(rör_nere)[0] < -100:
                 h = flappy.winfo_height()
-                num = random.choice([i for i in range(160,h,160)])
+                num = random.choice([i for i in range(160, h, 160)])
                 canvasflappy.coords(rör_nere, flappy.winfo_width(), num + 160)
                 canvasflappy.coords(rör_uppe, flappy.winfo_width(), num - 900)
-
-            if 145 < canvasflappy.coords(rör_nere)[0] <155:
+                # Öka poängen när ett nytt rör genereras
                 poäng += 1
-                fart += 1
-                canvasflappy.itemconfigure(text_poäng, text= str(poäng))
+                canvasflappy.itemconfigure(text_poäng, text=str(poäng))
 
-            if canvasflappy.coords(rör_nere):
+            # Kollision med rör
+            if (canvasflappy.bbox(fågel) and canvasflappy.bbox(rör_nere) and canvasflappy.bbox(rör_uppe)):
                 if (canvasflappy.bbox(fågel)[0] < canvasflappy.bbox(rör_nere)[2] and 
-            canvasflappy.bbox(fågel)[2] > canvasflappy.bbox(rör_nere)[0] and 
-            (canvasflappy.bbox(fågel)[1] < canvasflappy.bbox(rör_uppe)[3] or 
-            canvasflappy.bbox(fågel)[3] > canvasflappy.bbox(rör_nere)[1])):
-                        spel_över()
+                    canvasflappy.bbox(fågel)[2] > canvasflappy.bbox(rör_nere)[0] and 
+                    (canvasflappy.bbox(fågel)[1] < canvasflappy.bbox(rör_uppe)[3] or 
+                    canvasflappy.bbox(fågel)[3] > canvasflappy.bbox(rör_nere)[1])):
+                    spel_över()
+
             if not game_over:
                 flappy.after(50, flytta_rör)
-
-
 
         def starta_om_spel():
             global x,y,poäng,fart,game_over
@@ -234,6 +235,137 @@ class Flappy(Toplevel):
         flappy.after(50, flytta_rör)
 
         flappy.mainloop()
+
+
+class Mini(Toplevel):
+    def __init__(self, window = None,):
+        super().__init__(master= window)   
+
+
+def SnakeSpel():
+    class SnakeGame(Tk):
+        def __init__(self):
+            super().__init__()
+            self.title("Snake Game")
+            self.geometry("300x300")
+            
+            self.canvas = Canvas(self, bg="black", width=300, height=300)
+            self.canvas.pack()
+            
+            self.snake = [(150, 150), (160, 150), (170, 150)]
+            self.direction = "Right"
+            self.food = self.spawn_food()
+            
+            self.bind("<KeyPress>", self.change_direction)
+            
+            self.move_snake()
+        
+        def spawn_food(self):
+            x = random.randint(0, 29) * 10
+            y = random.randint(0, 29) * 10
+            self.food_id = self.canvas.create_rectangle(x, y, x+10, y+10, fill="red")
+            return (x, y)
+        
+        def move_snake(self):
+            head = self.snake[-1]
+            if self.direction == "Up":
+                new_head = (head[0], head[1] - 10)
+            elif self.direction == "Down":
+                new_head = (head[0], head[1] + 10)
+            elif self.direction == "Left":
+                new_head = (head[0] - 10, head[1])
+            elif self.direction == "Right":
+                new_head = (head[0] + 10, head[1])
+            
+            if new_head == self.food:
+                self.snake.append(new_head)
+                self.canvas.delete(self.food_id)
+                self.food = self.spawn_food()
+            else:
+                self.snake.pop(0)
+                self.snake.append(new_head)
+            
+            self.draw_snake()
+            
+            if self.check_collision():
+                self.game_over()
+                return
+            
+            self.after(100, self.move_snake)
+        
+        def draw_snake(self):
+            self.canvas.delete("snake")
+            for segment in self.snake:
+                self.canvas.create_rectangle(segment[0], segment[1], segment[0] + 10, segment[1] + 10, fill="green", tags="snake")
+        
+        def change_direction(self, event):
+            if event.keysym in ["Up", "Down", "Left", "Right"]:
+                if (event.keysym == "Up" and self.direction != "Down") or \
+                (event.keysym == "Down" and self.direction != "Up") or \
+                (event.keysym == "Left" and self.direction != "Right") or \
+                (event.keysym == "Right" and self.direction != "Left"):
+                    self.direction = event.keysym
+        
+        def check_collision(self):
+            head = self.snake[-1]
+            if head[0] < 0 or head[0] >= 300 or head[1] < 0 or head[1] >= 300:
+                return True
+            if head in self.snake[:-1]:
+                return True
+            return False
+        
+        def game_over(self):
+            self.canvas.create_text(150, 150, text="Game Over", fill="white", font=("Arial", 24, "bold"))
+
+    if __name__ == "__main__":
+        app = SnakeGame()
+        app.mainloop()
+
+
+def open_calculator():
+    calculator_window = Tk()
+    calculator_window.title("Calculator")
+    calculator_window.geometry("380x400")
+    
+    result_var = StringVar()
+    result_var.set("0")
+    
+    def on_button_click(text):
+        current_result = result_var.get()
+        
+        if text == "=":
+            try:
+                result = eval(current_result)
+                result_var.set(str(result))
+            except:
+                result_var.set("Error")
+        else:
+            if current_result == "0" or current_result == "Error":
+                result_var.set(text)
+            else:
+                # Update result_var directly with the new number
+                result_var.set(current_result + text)
+
+    
+    # Resultatfält
+    result_entry = Entry(calculator_window, textvariable=result_var, font=("Arial", 20), bd=5, justify="right", bg="lightgrey", fg="black")
+    result_entry.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=10, pady=10)
+    
+    # Knappar
+    buttons = [
+        ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("/", 1, 3),
+        ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
+        ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
+        ("0", 4, 0), (".", 4, 1), ("=", 4, 2), ("+", 4, 3)
+    ]
+    
+    for text, row, column in buttons:
+        button = Button(calculator_window, text=text, font=("Arial", 18), command=lambda t=text: on_button_click(t), bd=3, relief="raised", width=5, height=2)
+        button.grid(row=row, column=column, sticky="nsew", padx=5, pady=5)
+        button.bind("<Button-1>", lambda event, t=text: on_button_click(t))
+    
+    calculator_window.mainloop()
+
 
 
 Lebonbild = Image.open("Bilder/Sunshine.jpg")
@@ -292,7 +424,7 @@ for i in range(Laddning,101):
         Laddning = i+1
         LaddningVisa.update()
         LaddningVisa.place_forget()
-playsound("Ljud/Load.mp3")      
+playsound("Ljud/Moto.mp3")      
 Klart = Label(window,text="Klart",font="Arial 15 bold",fg="White",bg="Lightblue")   
 def klart():
     Klart.place(x=192,y=250)
@@ -301,6 +433,15 @@ def klart():
 def förstöra():
     Klart.place_forget()
 klart()
+
+
+def Nike():
+    url = "https://www.nike.com"  # Byt ut denna URL mot den du vill öppna
+    webbrowser.open(url)
+
+def Its():
+    url = "https://mockelngymnasiet.itslearning.com/DashboardMenu.aspx?LocationType=Personal&DashboardType=MyPage"  # Byt ut denna URL mot den du vill öppna
+    webbrowser.open(url)
 
 
 Bakgrundsbild = Image.open("Bilder/wolf.png")
@@ -339,6 +480,27 @@ Bild_Settings = Label(image=Click_Settings)
 KnappSettings = Button(window, height=40,width=40,image=Click_Settings)
 KnappSettings.bind("<Button>", lambda e: Inställningar(window))
 KnappSettings.place(x=55, y=425)
+
+
+Click_Bruh = PhotoImage(file="Bilder/Bruh.png")
+Bild_Bruh = Label(image=Click_Bruh)
+KnappBruh = Button(window, height=40,width=40,image=Click_Bruh,command=Nike)
+KnappBruh.place(x=130, y=425)
+
+Click_Its = PhotoImage(file="Bilder/Its.png")
+Bild_Its = Label(image=Click_Its)
+KnappIts = Button(window, height=40,width=40,image=Click_Its,command=Its)
+KnappIts.place(x=205, y=425)
+
+Click_Snake = PhotoImage(file="Bilder/Orm.png")
+Bild_Snake = Label(image=Click_Snake)
+KnappSnake = Button(window, height=40,width=40,image=Click_Snake,command=SnakeSpel)
+KnappSnake.place(x=55, y=275)
+
+Click_Calc = PhotoImage(file="Bilder/Orm.png")
+Bild_Calc = Label(image=Click_Snake)
+KnappCalc = Button(window, height=40,width=40,image=Click_Snake,command=open_calculator)
+KnappCalc.place(x=130, y=275)
 
 BildpåDully = Image.open("Bilder/dully.png")
 Photopådully = ImageTk.PhotoImage(BildpåDully)
@@ -466,8 +628,8 @@ ListMeddelande = [meddelandeolja, meddelandemamma, meddelandemelissa, meddelande
 
 def show_random_message():
     # Slumpmässigt beslut om meddelandet ska visas och ljudet ska spelas
-    if random.random() < 0.8:
-            if random.random() < 0.2:
+    if random.random() < 1:
+            if random.random() < 0.9:
                 random_message_func = random.choice(ListMeddelande)
                 random_message_func()
                 thread_audio = threading.Thread(target=play_audio)
@@ -494,8 +656,8 @@ Black_Bar_Botten.place(x=25,y=490)
 def knapp_melissa_click():
     play_audio_image_melissa()
 
-KnappMelissa = Button(window, height=1,width=1,command=knapp_melissa_click,bg="Black")
-KnappMelissa.place(x=140,y=515)
+KnappMelissa = Button(window, height=1,width=2,command=knapp_melissa_click,bg="Black")
+KnappMelissa.place(x=142,y=516)
 
 Melissabild = Image.open("Bilder/Melissa.jpg")
 PhotoMelissa = ImageTk.PhotoImage(Melissabild)
